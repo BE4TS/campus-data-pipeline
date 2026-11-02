@@ -5,11 +5,20 @@ A pipeline that takes messy attendance and marks spreadsheets from a college
 department, cleans them, stores them in one database, and flags students who
 may need support.
 
-## The problem
-Each teacher keeps their own Excel/CSV file. Column names, date formats and
-student IDs differ between files, and there are typos, duplicates, missing
-marks and entries like "AB" inside numeric columns. The department office
-cannot answer simple questions because the data cannot be combined.
+## Problems found
+
+### Teacher A (attendance_teacher_a.csv)
+- Status has blank values: N rows
+- Duplicate rows: N
+- Names have mixed case / extra spaces (example: "  Gokul Pillai  ")
+- ...
+
+### Teacher B (attendance_teacher_b.csv)
+- Present has inconsistent wording: Yes, yes, Y, present, No, absent, no, N
+- ...
+
+### Marks (internal_marks.csv)
+- ...
 
 ## The question
 Which students are at risk (low attendance plus falling marks), and what is
