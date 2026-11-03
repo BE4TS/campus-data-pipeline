@@ -11,9 +11,40 @@ def load_raw():
     b=pd.read_csv("data/RAW/attendance_teacher_b.csv").rename(columns=B_COLUMNS)
     c=pd.read_csv("data/RAW/internal_marks.csv").rename(columns=MARKS_COLUMNS)
     return a,b,c
+def clean_regno(df):
+    df=df.copy()
+    df["reg_no"]=(df["reg_no"].str.strip()
+                  .str.upper()
+                  .str.replace(r"[\s\-]","",regex=True))
+    return df
+#cleaning names
+def name__clean(df):
+    df=df.copy()
+    names=df["name"].str.strip()
+    names=names.str.replace(r"^(.+?),\s*(.+)$",r"\2 \1",regex=True)
+    df["name"]=names.str.title()
+    return df
+def fix_name_typos(df):
+    df=df.copy()
+    best=df.groupby("reg_no")["name"].agg(lambda s: s.mode() .iloc[0])
+    df["name"]=df["reg_no"].map(best)
+    return df 
+
+
 if __name__=="__main__":
     a,b,c=load_raw()
-    print(a.columns.tolist())
-    print(b.columns.tolist())
-    print(c.columns.tolist())
+    for name,df in [("A",a),("B",b)]:
+        step1=clean_regno(df)
+        step2=name__clean(step1)
+        step3=fix_name_typos(step2)
+        print(name, "unique names ->",
+              "raw:", df["name"].nunique(),
+              "after clean_names:", step2["name"].nunique(),
+              "after typo fix:", step3["name"].nunique())
+        # before=df["reg_no"].nunique()
+        # after=clean_regno(df)["reg_no"].nunique()
+        # print(name,"unique id before: ", before,"after: ", after)
+    # print(a.columns.tolist())
+    # print(b.columns.tolist())
+    # print(c.columns.tolist())
 
