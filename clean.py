@@ -53,20 +53,28 @@ def clean_status(df):
 
 if __name__=="__main__":
     a,b,c=load_raw()
-    a2=clean_dates(a,A_DATE_FORMAT)
-    b2=clean_dates(b,B_DATE_FORMAT)
-    print("A range:",a2["date"].min(),"to",a2["date"].max())
-    print("B range:",b2["date"].min(),"to",b2["date"].max())
-    for name,df in [("A",a),("B",b)]:
-        print(name, clean_status(df)["status"].value_counts(dropna=False))
-        step1=clean_regno(df)
-        step2=name__clean(step1)
-        step3=fix_name_typos(step2)
-        print(name, "unique names ->",
-              "raw:", df["name"].nunique(),
-              "after clean_names:", step2["name"].nunique(),
-              "after typo fix:", step3["name"].nunique())
-        # before=df["reg_no"].nunique()
+    a=clean_status(clean_dates(fix_name_typos(name__clean(clean_regno(a))),A_DATE_FORMAT))
+    b=clean_status(clean_dates(fix_name_typos(name__clean(clean_regno(b))),B_DATE_FORMAT))
+    print("A bad dates:", a["date"].isna().sum())
+    print("B bad dates:", b["date"].isna().sum())
+    print("A status:\n", a["status"].value_counts(dropna=False))
+    print("B status:\n", b["status"].value_counts(dropna=False))
+    print(a.head())
+    print(b.head())
+    # a2=clean_dates(a,A_DATE_FORMAT)
+    # b2=clean_dates(b,B_DATE_FORMAT)
+    # print("A range:",a2["date"].min(),"to",a2["date"].max())
+    # print("B range:",b2["date"].min(),"to",b2["date"].max())
+    # for name,df in [("A",a),("B",b)]:
+    #     print(name, clean_status(df)["status"].value_counts(dropna=False))
+    #     step1=clean_regno(df)
+    #     step2=name__clean(step1)
+    #     step3=fix_name_typos(step2)
+    #     print(name, "unique names ->",
+    #           "raw:", df["name"].nunique(),
+    #           "after clean_names:", step2["name"].nunique(),
+    #           "after typo fix:", step3["name"].nunique())
+    #     # before=df["reg_no"].nunique()
         # after=clean_regno(df)["reg_no"].nunique()
         # print(name,"unique id before: ", before,"after: ", after)
     # print(a.columns.tolist())
