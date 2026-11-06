@@ -61,6 +61,11 @@ if __name__=="__main__":
     print("B status:\n", b["status"].value_counts(dropna=False))
     print(a.head())
     print(b.head())
+    for col in  ["internal_1", "internal_2"]:
+        nums=pd.to_numeric(c[col],errors="coerce")
+        print(f"\n{col} text values:")
+        print(c.loc[nums.isna() & c[col].notna(),col].value_counts())
+        print(f"{col} above 20:",(nums>20).sum())
     # a2=clean_dates(a,A_DATE_FORMAT)
     # b2=clean_dates(b,B_DATE_FORMAT)
     # print("A range:",a2["date"].min(),"to",a2["date"].max())
