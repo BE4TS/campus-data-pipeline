@@ -9,6 +9,10 @@ MARKS_COLUMNS = {"Roll Number": "reg_no", "Subject": "subject",
 A_DATE_FORMAT="%d/%m/%Y"
 B_DATE_FORMAT="%d-%b-%y"
 
+
+STATUS_MAP={"p":"P","yes":"P","y":"P","present":"P",
+            "a":"A","no":"A","n":"A","absent":"A"}
+
 def load_raw():
     a=pd.read_csv("data/RAW/attendance_teacher_a.csv").rename(columns=A_COLUMNS)
     b=pd.read_csv("data/RAW/attendance_teacher_b.csv").rename(columns=B_COLUMNS)
@@ -39,6 +43,12 @@ def clean_dates(df,fmt):
     )
     return df
 
+def clean_status(df):
+    df=df.copy()
+    df["status"]=df["status"].str.strip().str.lower().map(STATUS_MAP)
+
+    return df 
+
 
 
 if __name__=="__main__":
@@ -48,6 +58,7 @@ if __name__=="__main__":
     print("A range:",a2["date"].min(),"to",a2["date"].max())
     print("B range:",b2["date"].min(),"to",b2["date"].max())
     for name,df in [("A",a),("B",b)]:
+        print(name, clean_status(df)["status"].value_counts(dropna=False))
         step1=clean_regno(df)
         step2=name__clean(step1)
         step3=fix_name_typos(step2)
