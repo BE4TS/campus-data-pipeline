@@ -6,6 +6,9 @@ B_COLUMNS={"RegNo":"reg_no","Name":"name","Day":"date","Present":"status"}
 MARKS_COLUMNS = {"Roll Number": "reg_no", "Subject": "subject",
                  "Internal 1": "internal_1", "Internal 2": "internal_2"}
 
+A_DATE_FORMAT="%d/%m/%Y"
+B_DATE_FORMAT="%d-%b-%y"
+
 def load_raw():
     a=pd.read_csv("data/RAW/attendance_teacher_a.csv").rename(columns=A_COLUMNS)
     b=pd.read_csv("data/RAW/attendance_teacher_b.csv").rename(columns=B_COLUMNS)
@@ -29,10 +32,21 @@ def fix_name_typos(df):
     best=df.groupby("reg_no")["name"].agg(lambda s: s.mode() .iloc[0])
     df["name"]=df["reg_no"].map(best)
     return df 
+def clean_dates(df,fmt):
+    df=df.copy()
+    df["date"]=pd.to_datetime(
+        df["date"].str.strip(),format=fmt,errors="coerce"
+    )
+    return df
+
 
 
 if __name__=="__main__":
     a,b,c=load_raw()
+    a2=clean_dates(a,A_DATE_FORMAT)
+    b2=clean_dates(b,B_DATE_FORMAT)
+    print("A range:",a2["date"].min(),"to",a2["date"].max())
+    print("B range:",b2["date"].min(),"to",b2["date"].max())
     for name,df in [("A",a),("B",b)]:
         step1=clean_regno(df)
         step2=name__clean(step1)
