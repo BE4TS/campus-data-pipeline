@@ -48,7 +48,14 @@ def clean_status(df):
     df["status"]=df["status"].str.strip().str.lower().map(STATUS_MAP)
 
     return df 
-
+MAX_MARK=20
+def clean_marks(df):
+    df=df.copy()
+    for col in ["internal_1","internal_2"]:
+        nums=pd.to_numeric(df[col],errors="coerce")
+        nums=nums.where(nums<=MAX_MARK)
+        df[col]=nums
+    return df 
 
 
 if __name__=="__main__":

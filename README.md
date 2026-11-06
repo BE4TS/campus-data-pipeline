@@ -19,7 +19,10 @@ may need support.
 
 ### Marks (internal_marks.csv)
 - ...
-
+### Decisions
+AB means absent. It isn’t a mark, so it becomes missing (NaN) and the column can be numeric.
+Marks above 20 are impossible. The maximum is 20, so these are data-entry errors. We can’t know the right value, so they become missing too. We don’t cap them at 20, because that would invent a mark.
+Blanks stay missing.
 ## The question
 Which students are at risk (low attendance plus falling marks), and what is
 the attendance trend for each class?
