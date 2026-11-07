@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 A_COLUMNS={"Reg No":"reg_no","Student Name":"name","Date":"date","Status":"status"}
@@ -12,6 +13,7 @@ B_DATE_FORMAT="%d-%b-%y"
 
 STATUS_MAP={"p":"P","yes":"P","y":"P","present":"P",
             "a":"A","no":"A","n":"A","absent":"A"}
+SUBJECT_MAP={"dbms":"DBMS","databse":"DBMS","os":"OS","operating systems":"OS","dsa":"DSA","data structures":"DSA"}
 
 def load_raw():
     a=pd.read_csv("data/RAW/attendance_teacher_a.csv").rename(columns=A_COLUMNS)
@@ -57,22 +59,40 @@ def clean_marks(df):
         df[col]=nums
     return df 
 
+def clean_subjects(df):
+    df=df.copy()
+    df["subject"]=df["subject"].str.strip().str.lower().map(SUBJECT_MAP)
+    return df
+def combine_attendance(a,b):
+    return pd.concat([a,b], ignore_index=True)
 
+def drop_dupes(df):
+    before=len(df)
+    df=df.drop_duplicates().reset_index(drop=True)
+    print(f"Removed {before-len(df)} duplicate rows ")
+    return df
+
+def drop_bad_dates(df):
+    before=len(df)
+    df=df.dropna(subset=["date"]).reset_index(drop=True)
+    print(f"Removed {before -len(df)} rows with invalid dates")
+    return df
+
+def main():
+    os.makedirs("data/clean", exist_ok=True)
+    a, b, c = load_raw()
+
+    a = clean_dates(clean_status(fix_name_typos(name__clean(clean_regno(a)))), A_DATE_FORMAT)
+    b = clean_dates(clean_status(fix_name_typos(name__clean(clean_regno(b)))), B_DATE_FORMAT)
+    attendance = drop_dupes(drop_bad_dates(combine_attendance(a, b)))
+
+    marks = drop_dupes(clean_marks(clean_subjects(clean_regno(c))))
+
+    attendance.to_csv("data/clean/attendance.csv", index=False)
+    marks.to_csv("data/clean/marks.csv", index=False)
+    print("Attendance rows:", len(attendance), "| Marks rows:", len(marks))
 if __name__=="__main__":
-    a,b,c=load_raw()
-    a=clean_status(clean_dates(fix_name_typos(name__clean(clean_regno(a))),A_DATE_FORMAT))
-    b=clean_status(clean_dates(fix_name_typos(name__clean(clean_regno(b))),B_DATE_FORMAT))
-    print("A bad dates:", a["date"].isna().sum())
-    print("B bad dates:", b["date"].isna().sum())
-    print("A status:\n", a["status"].value_counts(dropna=False))
-    print("B status:\n", b["status"].value_counts(dropna=False))
-    print(a.head())
-    print(b.head())
-    for col in  ["internal_1", "internal_2"]:
-        nums=pd.to_numeric(c[col],errors="coerce")
-        print(f"\n{col} text values:")
-        print(c.loc[nums.isna() & c[col].notna(),col].value_counts())
-        print(f"{col} above 20:",(nums>20).sum())
+   main()
     # a2=clean_dates(a,A_DATE_FORMAT)
     # b2=clean_dates(b,B_DATE_FORMAT)
     # print("A range:",a2["date"].min(),"to",a2["date"].max())
