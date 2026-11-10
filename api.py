@@ -8,7 +8,7 @@ engine = create_engine(os.environ["DATABASE_URL"])
 app = FastAPI(title="Campus Data API")
 
 
-@app.get("/at-risk")
+@app.get("/at-risk") # just basic
 def at_risk():
     with engine.connect() as conn:
         rows = conn.execute(text("SELECT * FROM at_risk_students")).mappings().all()
