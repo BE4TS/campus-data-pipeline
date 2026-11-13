@@ -36,3 +36,9 @@ the attendance trend for each class?
 
 ## Status
 Work in progress. Started November 2026.
+
+   python generate_data.py              # make messy sample data
+   python clean.py                      # clean into data/clean/
+   python load.py                       # load into Postgres
+   python -m uvicorn api:app --reload   # start the API, open /docs
+   python -m pytest                     # run tests
