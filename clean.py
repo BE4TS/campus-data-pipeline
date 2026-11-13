@@ -13,7 +13,7 @@ B_DATE_FORMAT="%d-%b-%y"
 
 STATUS_MAP={"p":"P","yes":"P","y":"P","present":"P",
             "a":"A","no":"A","n":"A","absent":"A"}
-SUBJECT_MAP={"dbms":"DBMS","databse":"DBMS","os":"OS","operating systems":"OS","dsa":"DSA","data structures":"DSA"}
+SUBJECT_MAP={"dbms":"DBMS","database mgmt": "DBMS","os":"OS","operating systems":"OS","dsa":"DSA","data structures":"DSA"}
 
 def load_raw():
     a=pd.read_csv("data/RAW/attendance_teacher_a.csv").rename(columns=A_COLUMNS)
