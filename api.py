@@ -22,3 +22,6 @@ def student_data():
         ).mappings().all()
 
     return [dict(row) for row in rows]
+@app.get("/")
+def home():
+    return {"message": "Campus Data API","docs":"/docs","endpoints":["/at-risk","/students"]}
