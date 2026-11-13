@@ -42,3 +42,13 @@ Work in progress. Started November 2026.
    python load.py                       # load into Postgres
    python -m uvicorn api:app --reload   # start the API, open /docs
    python -m pytest                     # run tests
+
+## How to run
+1. Install: `pip install -r requirements.txt`
+2. Start Postgres and create a database called `campus`
+3. Create `.env` with: `DATABASE_URL=postgresql://postgres:<password>@localhost:5432/campus`
+4. `python generate_data.py`   # messy sample data
+5. `python clean.py`           # clean into data/clean/
+6. `python load.py`            # load into Postgres
+7. `python -m uvicorn api:app --reload`   # API at http://127.0.0.1:8000/docs
+8. `python -m pytest`          # run the tests
